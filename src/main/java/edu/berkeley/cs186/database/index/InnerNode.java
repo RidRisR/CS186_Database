@@ -38,10 +38,10 @@ class InnerNode extends BPlusNode {
     // The page on which this leaf is serialized.
     private Page page;
 
-    // The keys and child pointers of this inner node. See the comment above
-    // LeafNode.keys and LeafNode.rids in LeafNode.java for a warning on the
-    // difference between the keys and children here versus the keys and children
-    // stored on disk. `keys` is always stored in ascending order.
+//     The keys and child pointers of this inner node. See the comment above
+//     LeafNode.keys and LeafNode.rids in LeafNode.java for a warning on the
+//     difference between the keys and children here versus the keys and children
+//     stored on disk. `keys` is always stored in ascending order.
     private List<DataBox> keys;
     private List<Long> children;
 
@@ -76,13 +76,34 @@ class InnerNode extends BPlusNode {
         }
     }
 
+    private Integer binarySearch(List<DataBox> a,DataBox key){
+        int len = a.size();
+        int left = 0;
+        int right = len - 1;
+
+        while(left <= right){
+            int mid = left + ((right - left)>>1);
+
+            if(a.get(mid).compareTo(key) >= 0)
+                right = mid - 1;
+            else
+                left = mid + 1;
+        }
+
+        return left;
+    }
+
     // Core API ////////////////////////////////////////////////////////////////
     // See BPlusNode.get.
     @Override
     public LeafNode get(DataBox key) {
         // TODO(proj2): implement
+        Optional<Integer> newKey = Optional.of(binarySearch(keys, key));
+        BPlusNode child = this.getChild(newKey.get());
+        child = child.get(key);
 
-        return null;
+        assert (child instanceof LeafNode);
+        return (LeafNode) child;
     }
 
     // See BPlusNode.getLeftmostLeaf.
