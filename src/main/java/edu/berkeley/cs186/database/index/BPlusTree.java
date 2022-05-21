@@ -147,32 +147,9 @@ public class BPlusTree {
 
         // TODO(proj2): implement
         LeafNode leaf = root.get(key);
-        Optional<Integer> index = Optional.ofNullable(binarySearch(leaf.getKeys(), key));
-
-        if(!index.isPresent())
-            return Optional.empty();
-
-        return Optional.of(leaf.getRids().get(index.get()));
+        return leaf.getRecordId(key);
     }
 
-    private Integer binarySearch(List<DataBox> a,DataBox key){
-        int len = a.size();
-        int left = 0;
-        int right = len - 1;
-
-        while(left <= right){
-            int mid = left + ((right - left)>>1);
-
-            if(a.get(mid).compareTo(key) >= 0)
-                right = mid - 1;
-            else
-                left = mid + 1;
-        }
-        if(left<len && a.get(left).equals(key))
-            return left;
-        else
-            return null;
-    }
 
     /**
      * scanEqual(k) is equivalent to get(k) except that it returns an iterator

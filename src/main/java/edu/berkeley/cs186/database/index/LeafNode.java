@@ -3,6 +3,8 @@ package edu.berkeley.cs186.database.index;
 import edu.berkeley.cs186.database.common.Buffer;
 import edu.berkeley.cs186.database.common.Pair;
 import edu.berkeley.cs186.database.concurrency.LockContext;
+import edu.berkeley.cs186.database.concurrency.LockType;
+import edu.berkeley.cs186.database.concurrency.LockUtil;
 import edu.berkeley.cs186.database.databox.DataBox;
 import edu.berkeley.cs186.database.databox.Type;
 import edu.berkeley.cs186.database.memory.BufferManager;
@@ -151,6 +153,35 @@ class LeafNode extends BPlusNode {
         // TODO(proj2): implement
         return this;
     }
+
+    private Integer binarySearch(List<DataBox> a,DataBox key){
+        int len = a.size();
+        int left = 0;
+        int right = len - 1;
+
+        while(left <= right){
+            int mid = left + ((right - left)>>1);
+
+            if(a.get(mid).compareTo(key) >= 0)
+                right = mid - 1;
+            else
+                left = mid + 1;
+        }
+        if(left<len && a.get(left).equals(key))
+            return left;
+        else
+            return null;
+    }
+
+    public Optional<RecordId> getRecordId(DataBox key) {
+        Optional<Integer> index = Optional.ofNullable(binarySearch(this.getKeys(), key));
+
+        if(!index.isPresent())
+            return Optional.empty();
+
+        return Optional.of(this.getRids().get(index.get()));
+    }
+
 
     // See BPlusNode.getLeftmostLeaf.
     @Override

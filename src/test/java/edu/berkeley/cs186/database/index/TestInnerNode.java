@@ -227,6 +227,21 @@ public class TestInnerNode {
 
     @Test
     @Category(PublicTests.class)
+    public void testGetRecordId() {
+        LeafNode leaf0 = getLeaf(this.leaf0);
+        assertNotNull(leaf0);
+        for (int i = 1; i <= 3; ++i) {
+            DataBox j = IntDataBox.fromObject(i);
+            assertTrue(leaf0.getRecordId(j).isPresent());
+        }
+        for (int i = 4; i <= 6; i++) {
+            DataBox j = IntDataBox.fromObject(i);
+            assertFalse(leaf0.getRecordId(j).isPresent());
+        }
+    }
+
+    @Test
+    @Category(PublicTests.class)
     public void testGetLeftmostLeaf() {
         assertNotNull(getLeaf(leaf0));
         assertEquals(getLeaf(leaf0), inner.getLeftmostLeaf());
