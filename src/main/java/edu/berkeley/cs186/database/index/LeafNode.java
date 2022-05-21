@@ -174,6 +174,7 @@ class LeafNode extends BPlusNode {
     }
 
     public Optional<RecordId> getRecordId(DataBox key) {
+        assert(this.getKeys().size()>0);
         Optional<Integer> index = Optional.ofNullable(binarySearch(this.getKeys(), key));
 
         if(!index.isPresent())

@@ -98,6 +98,8 @@ class InnerNode extends BPlusNode {
     @Override
     public LeafNode get(DataBox key) {
         // TODO(proj2): implement
+        assert(keys.size() > 0);
+        assert(children.size() > 0);
         Optional<Integer> newKey = Optional.of(binarySearch(keys, key));
         BPlusNode child = this.getChild(newKey.get());
         child = child.get(key);
