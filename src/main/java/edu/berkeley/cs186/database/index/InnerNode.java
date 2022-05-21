@@ -84,13 +84,13 @@ class InnerNode extends BPlusNode {
         while(left <= right){
             int mid = left + ((right - left)>>1);
 
-            if(a.get(mid).compareTo(key) >= 0)
+            if(a.get(mid).compareTo(key) > 0)
                 right = mid - 1;
             else
                 left = mid + 1;
         }
 
-        return left;
+        return right+1;
     }
 
     // Core API ////////////////////////////////////////////////////////////////
