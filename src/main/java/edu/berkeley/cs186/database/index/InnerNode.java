@@ -76,23 +76,6 @@ class InnerNode extends BPlusNode {
         }
     }
 
-    private Integer binarySearch(List<DataBox> a,DataBox key){
-        int len = a.size();
-        int left = 0;
-        int right = len - 1;
-
-        while(left <= right){
-            int mid = left + ((right - left)>>1);
-
-            if(a.get(mid).compareTo(key) > 0)
-                right = mid - 1;
-            else
-                left = mid + 1;
-        }
-
-        return right+1;
-    }
-
     // Core API ////////////////////////////////////////////////////////////////
     // See BPlusNode.get.
     @Override
@@ -100,7 +83,7 @@ class InnerNode extends BPlusNode {
         // TODO(proj2): implement
         assert(keys.size() > 0);
         assert(children.size() > 0);
-        Optional<Integer> newKey = Optional.of(binarySearch(keys, key));
+        Optional<Integer> newKey = Optional.of(BinarySearch.lessThan(keys, key)+1);
         BPlusNode child = this.getChild(newKey.get());
         child = child.get(key);
 
