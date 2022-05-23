@@ -175,16 +175,24 @@ class LeafNode extends BPlusNode {
     @Override
     public Optional<Pair<DataBox, Long>> put(DataBox key, RecordId rid) {
         // TODO(proj2): implement
-        if(keys.size() < 2 * metadata.getOrder()) {
-            for (int i = 0; i < keys.size(); i++) {
-                if (keys.get(i).compareTo(key) < 0)
-                    continue;
-                else
-                    keys.add(i, key);
-            }
+        Integer index = BinarySearch.largerThan(keys, key);
+        keys.add(index,key);
+        rids.add(index, rid);
+
+        if (keys.size() <= 2*metadata.getOrder()){
+            return Optional.empty();
         }
 
-        return Optional.empty();
+        List<DataBox> newKeys = keys.subList(metadata.getOrder(),keys.size() - 1);
+        keys = keys.subList(0, metadata.getOrder()-1);
+        List<RecordId> newRids = rids.subList(metadata.getOrder(), keys.size() - 1);
+        rids = rids.subList(0, metadata.getOrder()-1);
+
+        LeafNode newLeaf = new LeafNode(metadata, bufferManager, newKeys, newRids, rightSibling, treeContext);
+        long newPageNum = newLeaf.getPage().getPageNum();
+        rightSibling = Optional.of(newPageNum);
+        return Optional.of(new Pair(newKeys.get(0),newPageNum));
+
     }
 
 
